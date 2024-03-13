@@ -1,21 +1,42 @@
 import React, { useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 
 const Content = () => {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
 
   const handleEdit = () => {};
-  const handleDelete = () => {};
+  const handleDelete = (e) => {
+    let id = e;
+    console.log(`The id is ${id}`);
+    let newTodos = todos.filter(item => {
+      return item.id !== id;
+    });
+    setTodos(newTodos);
+    console.log(newTodos);
+  };
   const handleAdd = () => {
-    console.log(todo);
-    setTodos([...todos, { todo, isCompleted: false }]);
+    // console.log(todo);
+    setTodos([...todos, { id: uuidv4(), todo, isCompleted: false }]);
     setTodo("");
   };
   const handleSubmit = (event) => {
     event.preventDefault();
     // alert("The browser will not reload when the alert box is closed.");
   };
-  console.log(todos);
+  const handleCheckBox = (event) => { 
+    let id = event.target.name; // Extract the ID from the event target name
+    // console.log(id);
+    let index = todos.findIndex(item => {
+      return item.id === id;
+    });
+    console.log(index);
+    let newTodos = [...todos];
+    newTodos[index].isCompleted  = !newTodos[index].isCompleted;
+    setTodos(newTodos);
+    // console.log(newTodos);
+  };
+  // console.log(todos);
   return (
     <>
       <div className="container mx-auto my-5 p-5 bg-violet-200 rounded-xl w-[80%]">
@@ -39,10 +60,10 @@ const Content = () => {
         <h2 className="text-xl font-bold">Your Todos</h2>
         <div className="todos">
           {
-          todos.map((item, index) => {
+          todos.map((item) => {
               return (
-                <div className="todo flex w-1/3 justify-between my-2" key={index}>
-                  <input type="checkbox" name="" id="" />
+                <div className="todo flex w-1/3 justify-between my-2" key={item.id}>
+                  <input onChange={handleCheckBox} type="checkbox" name={item.id} id="" value={item.isCompleted}/>
                 <div className={item.isCompleted ? "line-through" : "" }>{item.todo}</div>
                 <div className="buttons">
                   <button
@@ -52,7 +73,7 @@ const Content = () => {
                     Edit
                   </button>
                   <button
-                    onClick={handleDelete}
+                    onClick={() => handleDelete(item.id)}
                     className="bg-violet-500 px-3 rounded-lg py-1 text-white ml-2 font-bold"
                   >
                     Delete
