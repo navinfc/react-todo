@@ -5,7 +5,10 @@ const Content = () => {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
 
-  const handleEdit = () => {};
+  const handleEdit = () => {
+
+  };
+
   const handleDelete = (e) => {
     let id = e;
     console.log(`The id is ${id}`);
@@ -20,10 +23,12 @@ const Content = () => {
     setTodos([...todos, { id: uuidv4(), todo, isCompleted: false }]);
     setTodo("");
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     // alert("The browser will not reload when the alert box is closed.");
   };
+
   const handleCheckBox = (event) => { 
     let id = event.target.name; // Extract the ID from the event target name
     // console.log(id);
@@ -36,10 +41,11 @@ const Content = () => {
     setTodos(newTodos);
     // console.log(newTodos);
   };
+
   // console.log(todos);
   return (
     <>
-      <div className="container mx-auto my-5 p-5 bg-violet-200 rounded-xl w-[80%]">
+      <div className="container mx-auto my-5 p-5 bg-violet-300 rounded-xl w-[80%]">
         <form onSubmit={handleSubmit}>
         <div className="">
           <h2 className="text-lg font-bold mb-2">Add Todo</h2>
@@ -59,12 +65,15 @@ const Content = () => {
         </form>
         <h2 className="text-xl font-bold">Your Todos</h2>
         <div className="todos">
+          {todos.length === 0 && <div className="font-bold text-2xl my-2">👉No Todos To Display👈</div>}
           {
           todos.map((item) => {
               return (
-                <div className="todo flex w-1/3 justify-between my-2" key={item.id}>
+                <div className="todo flex w-1/3 justify-between my-3" key={item.id}>
+                  <div className="flex gap-5 items-center">
                   <input onChange={handleCheckBox} type="checkbox" name={item.id} id="" value={item.isCompleted}/>
                 <div className={item.isCompleted ? "line-through" : "" }>{item.todo}</div>
+                  </div>
                 <div className="buttons">
                   <button
                     onClick={handleEdit}
