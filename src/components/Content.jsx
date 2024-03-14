@@ -1,12 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 
 const Content = () => {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
 
-  const handleEdit = () => {
+  useEffect(() => {
+    let todoString = localStorage.getItem('todos');
+    if(todoString) {
+      let todos = JSON.parse(localStorage.getItem("todos"));
+      setTodos(todos);
+    }
+  }, []);
 
+  const saveToLocalStorage = (params) => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }
+
+  const handleEdit = (e, id) => {
+    let editTodo = todos.filter(i => i.id === id);
+    setTodo(editTodo[0].todo);
+    let newTodos = todos.filter(item => {
+      return item.id !== id;
+    });
+    setTodos(newTodos);
+    saveToLocalStorage();
   };
 
   const handleDelete = (e) => {
@@ -17,11 +35,13 @@ const Content = () => {
     });
     setTodos(newTodos);
     console.log(newTodos);
+    saveToLocalStorage();
   };
   const handleAdd = () => {
     // console.log(todo);
     setTodos([...todos, { id: uuidv4(), todo, isCompleted: false }]);
     setTodo("");
+    saveToLocalStorage();
   };
 
   const handleSubmit = (event) => {
@@ -40,6 +60,7 @@ const Content = () => {
     newTodos[index].isCompleted  = !newTodos[index].isCompleted;
     setTodos(newTodos);
     // console.log(newTodos);
+    saveToLocalStorage();
   };
 
   // console.log(todos);
@@ -59,7 +80,7 @@ const Content = () => {
             className="bg-violet-500 px-3 rounded-lg py-1 text-white mx-6 font-bold"
             onClick={handleAdd}
           >
-            Add
+            Save
           </button>
         </div>
         </form>
@@ -74,9 +95,9 @@ const Content = () => {
                   <input onChange={handleCheckBox} type="checkbox" name={item.id} id="" value={item.isCompleted}/>
                 <div className={item.isCompleted ? "line-through" : "" }>{item.todo}</div>
                   </div>
-                <div className="buttons">
+                <div className="buttons flex h-full">
                   <button
-                    onClick={handleEdit}
+                    onClick={(e) => handleEdit(e, item.id)}
                     className="bg-violet-500 px-3 rounded-lg py-1 text-white ml-4 font-bold"
                   >
                     Edit
